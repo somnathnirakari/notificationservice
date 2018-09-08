@@ -12,7 +12,6 @@ jobs:
     # Specify service dependencies here if necessary
     # CircleCI maintains a library of pre-built images
     # documented at https://circleci.com/docs/2.0/circleci-images/
-    # - image: circleci/postgres:9.4
 
     working_directory: ~/repo
 
@@ -31,8 +30,16 @@ jobs:
         # fallback to using the latest cache if no exact match is found
         - v1-dependencies-
 
-    - run: gradle dependencies
-
+    - run:
+        name: "Build and assemble deployment artifacts"
+        command: |
+          ./gradlew clean build
+          ./gradlew assemble
+          mkdir release
+          mv build/libs/*.jar release/
+          cd release
+          zip -r cred-notifications.zip
+    -
     - save_cache:
         paths:
         - ~/.gradle
@@ -40,6 +47,29 @@ jobs:
 
     # run tests!
     - run: ./gradlew test
+  deploy:
+    docker:
+    - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+    - run:
+        name: Install awscli
+        command: sudo pip install awscli
+    - run:
+        name: Deploy to S3
+        command: aws s3 cp cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-`git rev-parse --short HEAD`.zip --region "us-west-2"
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+    - build
+    - deploy:
+        requires:
+        - build
+        filters:
+          branches:
+            only: master
 
 
 
