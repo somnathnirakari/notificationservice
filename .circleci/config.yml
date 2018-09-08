@@ -57,7 +57,7 @@ jobs:
         command: sudo pip install awscli
     - run:
         name: Deploy to S3
-        command: aws s3 cp cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-`git rev-parse --short HEAD`.zip --region "us-west-2"
+        command: aws s3 cp release/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-`git rev-parse --short HEAD`.zip --region "us-west-2"
 
 workflows:
   version: 2
