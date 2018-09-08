@@ -1,0 +1,20 @@
+server:
+  port: 8181
+
+cred:
+  notifications:
+    phone-verification:
+      twilio:
+        api-key: AmTWaFDcSVhO96PV5nu11UrH14aYzhHW
+        code-length: 4
+    sms:
+      twilio:
+        auth-token: 4dd8ecbead1cfcf7c0f6c2915ae9bcf6
+        sid: MG6c85f7e5c10645978e878af7fb437bd7
+        account-sid: ACcd44cf2fe64275bba3fe98bc53470153
+    push-notification:
+      twilio:
+        api-key: SK985d6202a6bf6bc44af989c1791ea945
+        api-secret: DTTlQlxLNdPKufctF6oeMRKRVy06nVpx
+        account-sid: AC4a24c3a684c02ac089f538a1adcb8b28
+        notification-service-sid: IS0a7a39adbd3d77a0394b5ed5306e7e3e

@@ -1,0 +1,14 @@
+server:
+  port: 8181
+
+cred:
+  notifications:
+    phone-verification:
+      twilio:
+        api-key:
+        code-length:
+    sms:
+      twilio:
+        auth-token:
+        sid:
+        account-sid:
