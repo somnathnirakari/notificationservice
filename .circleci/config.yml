@@ -39,7 +39,7 @@ jobs:
           mv build/libs/*.jar release/
           cd release
           zip -r cred-notifications.zip
-    -
+          
     - save_cache:
         paths:
         - ~/.gradle
