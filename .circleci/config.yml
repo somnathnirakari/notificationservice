@@ -33,14 +33,14 @@ jobs:
     - run:
         name: "Build and assemble deployment artifacts"
         command: |
-          ./gradlew clean build
-          ./gradlew assemble
-          mkdir release
-          mv build/libs/*.jar release/
-          cd release
-          zip -r cred-notifications.zip .
-          echo `pwd`
-          echo `ls`
+            ./gradlew clean build
+            ./gradlew assemble
+            mkdir release
+            mv build/libs/*.jar release/
+            cd release
+            zip -r cred-notifications.zip .
+            echo `pwd`
+            echo `ls`
     - save_cache:
         paths:
         - ~/.gradle
