@@ -87,7 +87,7 @@ jobs:
         command: sudo npm install -g npm@latest
     - run:
         name: Install aws-code-deploy
-        command: npm install aws-code-deploy -g
+        command: sudo npm install aws-code-deploy -g
     - run:
         name: Install awscli
         command: sudo pip install awscli
