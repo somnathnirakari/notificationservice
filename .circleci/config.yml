@@ -78,11 +78,13 @@ jobs:
         command: sudo pip install awscli
     - run:
         name: Deploy to S3
-        command: |
-          echo `pwd`
-          echo `ls`
-          echo `ls release`
-          aws s3 cp /home/circleci/repo/release/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-1.zip --region "us-west-2"
+        command: aws s3 cp /home/circleci/repo/release/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-`git rev-parse --short HEAD`.zip --region "us-west-2"
+    - run:
+        name: Create application on EB
+        command: aws elasticbeanstalk create-application-version --application-name "cred-notification" --version-label `git rev-parse --short HEAD` --source-bundle S3Bucket="elasticbeanstalk-us-west-2-724072406552",S3Key="releases/notification-service/cred-notifications-`git rev-parse --short HEAD`.zip" --region "us-west-2"
+    - run:
+        name: Update application environment
+        command: aws elasticbeanstalk update-environment --environment-name "CredNotification-env" --version-label `git rev-parse --short HEAD` --region "us-west-2"
 #    - run:
 #          name: Run aws-code-deploy
 #          command: aws-code-deploy
