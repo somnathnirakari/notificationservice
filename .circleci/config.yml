@@ -44,6 +44,17 @@ jobs:
 
     steps:
     - checkout
+      #TODO create custom Docker image with Node and Yarn Installed
+      # Install Node for JH Build
+      - run:
+          name: Download Node
+          command: curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash
+      - run:
+          name: Install Node
+          command: sudo apt-get install -y nodejs
+      - run:
+          name: update-npm
+          command: sudo npm install -g npm@latest
 
     # Download and cache dependencies
     - restore_cache:
@@ -72,7 +83,6 @@ jobs:
   deploy:
     docker:
     - image: circleci/python:2.7-jessie
-    - image: circleci/node:10.9-jessie-browsers
     working_directory: ~/repo
     steps:
     - run:
