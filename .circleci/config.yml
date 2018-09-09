@@ -37,17 +37,15 @@ jobs:
         mv build/libs/*.jar release/
         cd release
         zip -r cred-notifications.zip .
-        echo `pwd`
-        echo `ls`
     - save_cache:
         paths:
           - ~/.gradle
         key: v1-dependencies-{{ checksum "build.gradle" }}
     # Cache the dist folder for the deploy job
     - save_cache:
-        key: v1-release-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+        key: v1-zip-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
         paths:
-          - release
+          - release/cred-notifications.zip
     # run tests!
     - run: ./gradlew test
   deploy:
@@ -58,7 +56,7 @@ jobs:
     # Restore cache from the build job which contains the
     # dist folder that needs to be deployed
     - restore_cache:
-        key: v1-release-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+        key: v1-zip-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
     #TODO create custom Docker image with Node and Yarn Installed
     # Install Node for JH Build
 #    - run:
@@ -81,7 +79,8 @@ jobs:
         command: |
           echo `pwd`
           echo `ls`
-          aws s3 cp ${CIRCLE_WORKING_DIRECTORY}/release/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-1.zip --region "us-west-2"
+          echo `ls release`
+          aws s3 cp ${CIRCLE_WORKING_DIRECTORY}/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-1.zip --region "us-west-2"
 #    - run:
 #          name: Run aws-code-deploy
 #          command: aws-code-deploy
