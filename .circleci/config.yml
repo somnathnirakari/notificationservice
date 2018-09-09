@@ -96,7 +96,7 @@ jobs:
 #        command: aws s3 cp release/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-1.zip --region "us-west-2"
     - run:
          name: Run aws-code-deploy
-         command: vendor/bin/aws-code-deploy.sh
+         command: aws-code-deploy
 workflows:
   version: 2
   build-deploy:
