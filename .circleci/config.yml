@@ -3,6 +3,28 @@
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
 version: 2
+machine:
+  environment:
+    DEPLOY_DIR: $HOME/deploy
+
+    # We are defining the $AWS_CODE_DEPLOY_KEY and $AWS_CODE_DEPLOY_SECRET in the CircleCI Project Settings >
+    # AWS Permissions which automatically configure these for use via aws cli and are automatically read
+    # via aws-code-deploy.sh. Alternatively, these could be specified securely (not via project code) using
+    # the CircleCI Environment Variables CircleCI control panel.
+    AWS_CODE_DEPLOY_REGION: us-west-2
+    AWS_CODE_DEPLOY_APPLICATION_NAME: "CredNotification"
+    #AWS_CODE_DEPLOY_DEPLOYMENT_CONFIG_NAME: CodeDeployDefault.AllAtOnce
+    AWS_CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: "www.my-company.com"
+    #AWS_CODE_DEPLOY_SERVICE_ROLE_ARN: "arn:aws:iam::XXXXXXXXXXXXX:role/my-company-codedeploy"
+    #AWS_CODE_DEPLOY_EC2_TAG_FILTERS: "Key=Type,Value=www,Type=KEY_AND_VALUE"
+    #AWS_CODE_DEPLOY_APP_SOURCE: $HOME/deploy
+    AWS_CODE_DEPLOY_S3_FILENAME: "cred-notifications-${CIRCLE_BUILD_NUM}#${CIRCLE_SHA1:0:7}.zip"
+    AWS_CODE_DEPLOY_S3_BUCKET: elasticbeanstalk-us-west-2-724072406552/releases
+    AWS_CODE_DEPLOY_S3_KEY_PREFIX: /notification-service
+    AWS_CODE_DEPLOY_S3_LIMIT_BUCKET_FILES: 10
+    AWS_CODE_DEPLOY_S3_SSE: true
+    AWS_CODE_DEPLOY_REVISION_DESCRIPTION: "${CIRCLE_BRANCH} (#${CIRCLE_SHA1:0:7})"
+    AWS_CODE_DEPLOY_DEPLOYMENT_DESCRIPTION: "Deployed via CircleCI on $(date)"
 jobs:
   build:
     docker:
@@ -53,12 +75,17 @@ jobs:
     working_directory: ~/repo
     steps:
     - run:
+        name: Install aws-code-deploy
+        command: npm install aws-code-deploy -g
+    - run:
         name: Install awscli
         command: sudo pip install awscli
-    - run:
-        name: Deploy to S3
-        command: aws s3 cp release/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-1.zip --region "us-west-2"
-
+#    - run:
+#        name: Deploy to S3
+#        command: aws s3 cp release/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-1.zip --region "us-west-2"
+     - run:
+         name: Run aws-code-deploy
+         command: vendor/bin/aws-code-deploy.sh
 workflows:
   version: 2
   build-deploy:
