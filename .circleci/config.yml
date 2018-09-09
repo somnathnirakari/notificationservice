@@ -70,7 +70,10 @@ jobs:
         command: sudo pip install awscli
     - run:
         name: Deploy to S3
-        command: aws s3 cp ${CIRCLE_WORKING_DIRECTORY}/release/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-1.zip --region "us-west-2"
+        command: |
+          echo `pwd`
+          echo 'ls'
+          aws s3 cp ${CIRCLE_WORKING_DIRECTORY}/release/cred-notifications.zip s3://elasticbeanstalk-us-west-2-724072406552/releases/notification-service/cred-notifications-1.zip --region "us-west-2"
 #    - run:
 #          name: Run aws-code-deploy
 #          command: aws-code-deploy
