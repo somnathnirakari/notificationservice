@@ -41,9 +41,13 @@ jobs:
         echo `ls`
     - save_cache:
         paths:
-        - ~/.gradle
+          - ~/.gradle
         key: v1-dependencies-{{ checksum "build.gradle" }}
-
+    # Cache the dist folder for the deploy job
+    - save_cache:
+        key: v1-release-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+        paths:
+          - release
     # run tests!
     - run: ./gradlew test
   deploy:
@@ -51,6 +55,10 @@ jobs:
     - image: circleci/python:2.7-jessie
     working_directory: ~/repo
     steps:
+    # Restore cache from the build job which contains the
+    # dist folder that needs to be deployed
+    - restore_cache:
+        key: v1-release-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
     #TODO create custom Docker image with Node and Yarn Installed
     # Install Node for JH Build
 #    - run:
